@@ -30,20 +30,16 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.7'
-      #credentials to connect to AWS
-      - name: Configure AWS credentials from Production account
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: zip
+        uses: montudor/action-zip@v0.1.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          runtime: python3.7
-          s3_bucket: ${{ secrets.AWS_BUCKET_NAME }}
+          args: zip -qq -r ./bundle.zip ./
       #Deploy main.py to AWS
-      - name: AWS Lambda Deploy
-        uses: appleboy/lambda-action@v0.0.4
+      - name: default deploy
+        uses: appleboy/lambda-action@master
         with:
-          #name of my AWS Lambda Function
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
           function_name: my-function-x
-          #contains all the files in my github repository
-          zip_file: output.zip
+          zip_file: bundle.zip
